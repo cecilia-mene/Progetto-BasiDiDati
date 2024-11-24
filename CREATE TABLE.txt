@@ -1,0 +1,218 @@
+CREATE TABLE Ospedale (
+    Codice INT PRIMARY KEY,
+    Nome VARCHAR(100) UNIQUE NOT NULL,
+    Indirizzo VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE ProntoSoccorso (
+    Indirizzo VARCHAR(100) NOT NULL,
+    CodiceOspedale INT NOT NULL,
+    PRIMARY KEY (Indirizzo, CodiceOspedale),
+    FOREIGN KEY (CodiceOspedale) REFERENCES Ospedale(Codice)ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Reparto (
+    Nome VARCHAR(50) NOT NULL,
+    CodiceOspedale INT NOT NULL,
+    Telefono VARCHAR(15) UNIQUE NOT NULL,
+    PRIMARY KEY (Nome, CodiceOspedale),
+    FOREIGN KEY (CodiceOspedale) REFERENCES Ospedale(Codice) ON DELETE CASCADE ON UPDATE CASCADE
+
+);
+
+CREATE TABLE OrarioVisiteReparto (
+    NomeReparto VARCHAR(50) NOT NULL,
+    CodiceOspedale INT NOT NULL,
+    Giorno VARCHAR(10) NOT NULL,
+    OrarioApertura TIME NOT NULL,
+    OrarioChiusura TIME NOT NULL,
+    PRIMARY KEY (NomeReparto, CodiceOspedale, Giorno),
+    FOREIGN KEY (NomeReparto, CodiceOspedale) REFERENCES Reparto(Nome, CodiceOspedale) ON DELETE CASCADE ON UPDATE CASCADE
+
+);
+
+CREATE TABLE Personale (
+    CF CHAR(16) PRIMARY KEY,
+    Nome VARCHAR(50) NOT NULL,
+    Cognome VARCHAR(50) NOT NULL,
+    CodiceOspedale INT NOT NULL,
+    NomeReparto VARCHAR(50) NOT NULL,
+    AnzianitaServizio INT DEFAULT 1,
+    TipoPersonale VARCHAR(50) NOT NULL CHECK (TipoPersonale IN ('personale medico', 'infermiere', 'personale amministrativo')),
+    FOREIGN KEY (NomeReparto, CodiceOspedale) REFERENCES Reparto(Nome, CodiceOspedale) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Paziente (
+    CF CHAR(16) PRIMARY KEY,
+    Nome VARCHAR(50) NOT NULL,
+    Cognome VARCHAR(50) NOT NULL,
+    DataNascita DATE NOT NULL
+);
+
+CREATE TABLE Esame (
+    IDEsame INT PRIMARY KEY,
+    Nome VARCHAR(50) UNIQUE NOT NULL,
+    Descrizione TEXT NOT NULL,
+    Specialistico VARCHAR(50),
+    CostoPrivato DECIMAL(10, 2) NOT NULL CHECK (CostoPrivato >0),
+    CostoSanitario DECIMAL(10, 2) NOT NULL CHECK (CostoSanitario >0)
+);
+
+CREATE TABLE Prenotazione (
+    CFPaziente CHAR(16) NOT NULL,
+    DataPrenotazione DATE NOT NULL,
+    IDEsame INT NOT NULL,
+    Urgenza VARCHAR(100) NOT NULL CHECK (Urgenza IN ('rosso', 'giallo', 'verde')),
+    DataOraEsame TIMESTAMP NOT NULL,
+    PRIMARY KEY (CFPaziente, DataPrenotazione, IDEsame),
+    FOREIGN KEY (CFPaziente) REFERENCES Paziente(CF) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (IDEsame) REFERENCES Esame(IDEsame) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Avvertenze (
+    Descrizione TEXT PRIMARY KEY NOT NULL
+);
+
+CREATE TABLE TurniPS (
+    IndirizzoPS VARCHAR(100) NOT NULL,
+    CodiceOspedale INT NOT NULL,
+    CFPersonale CHAR(16) NOT NULL,
+    OraInizio TIME NOT NULL,
+    OraFine TIME NOT NULL,
+    PRIMARY KEY (IndirizzoPS, CodiceOspedale, OraInizio, CFPersonale),
+    FOREIGN KEY (IndirizzoPS, CodiceOspedale) REFERENCES ProntoSoccorso(Indirizzo, CodiceOspedale) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (CFPersonale) REFERENCES Personale(CF) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE SalaOperatoria (
+    NumeroSala INT NOT NULL,
+    CodiceOspedale INT NOT NULL,
+    NomeReparto VARCHAR(50) NOT NULL,
+    PRIMARY KEY (NumeroSala, CodiceOspedale),
+    FOREIGN KEY (NomeReparto, CodiceOspedale) REFERENCES Reparto(Nome, CodiceOspedale) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Stanza (
+    Numero INT NOT NULL,
+    NomeReparto VARCHAR(50) NOT NULL,
+    CodiceOspedale INT NOT NULL,
+    PRIMARY KEY (Numero, NomeReparto, CodiceOspedale),
+    FOREIGN KEY (NomeReparto, CodiceOspedale) REFERENCES Reparto(Nome, CodiceOspedale) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Letto (
+    CodiceLetto INT NOT NULL,
+    NumeroStanza INT NOT NULL,
+    NomeReparto VARCHAR(50) NOT NULL,
+    CodiceOspedale INT NOT NULL,
+    Stato BOOLEAN NOT NULL DEFAULT FALSE, --il letto parte come libero(false)
+    PRIMARY KEY (CodiceLetto, NumeroStanza, NomeReparto, CodiceOspedale),
+    FOREIGN KEY (NumeroStanza, NomeReparto, CodiceOspedale) REFERENCES Stanza(Numero, NomeReparto, CodiceOspedale) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Ambulatorio (
+    ID INT PRIMARY KEY NOT NULL
+);
+
+CREATE TABLE AmbulatorioInterno (
+    IDAmbulatorio INT NOT NULL,
+    NumeroStanza INT NOT NULL,
+    NomeReparto VARCHAR(50) NOT NULL,
+    CodiceOspedale INT NOT NULL,
+    Piano INT NOT NULL,
+    PRIMARY KEY (IDAmbulatorio),
+    FOREIGN KEY (NumeroStanza, NomeReparto, CodiceOspedale) REFERENCES Stanza(Numero, NomeReparto, CodiceOspedale) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (IDAmbulatorio) REFERENCES Ambulatorio(ID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE AmbulatorioEsterno (
+    IDAmbulatorio INT NOT NULL,
+    CodiceOspedale INT NOT NULL,
+    Indirizzo VARCHAR(100) NOT NULL,
+    Nome VARCHAR(50) NOT NULL,
+    NTelefono VARCHAR(15) NOT NULL,
+    PRIMARY KEY (IDAmbulatorio),
+    FOREIGN KEY (CodiceOspedale) REFERENCES Ospedale(Codice) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (IDAmbulatorio) REFERENCES Ambulatorio(ID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE OrarioEsterno (
+    Giorno VARCHAR(10) NOT NULL,
+    IDAmbulatorio INT NOT NULL,
+    OraApertura TIME NOT NULL,
+    OraChiusura TIME NOT NULL,
+    PRIMARY KEY (Giorno, IDAmbulatorio),
+    FOREIGN KEY (IDAmbulatorio) REFERENCES AmbulatorioEsterno(IDAmbulatorio) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Primario (
+    CFPrimario VARCHAR(16) NOT NULL,
+    NomeReparto VARCHAR(50) NOT NULL,
+    CodiceOspedale INT NOT NULL,
+    PRIMARY KEY (CFPrimario),
+    FOREIGN KEY (CFPrimario) REFERENCES Personale(CF) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (NomeReparto, CodiceOspedale) REFERENCES Reparto(Nome, CodiceOspedale) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT Reparto_ospedale UNIQUE (NomeReparto, CodiceOspedale)
+
+);
+
+CREATE TABLE Specializzazione (
+    Nome VARCHAR(50) PRIMARY KEY NOT NULL
+);
+
+CREATE TABLE VicePrimario (
+    CFVicePrimario CHAR(16) NOT NULL,
+    DataAssunzione DATE NOT NULL,
+    NomeReparto VARCHAR(50) NOT NULL,
+    CodiceOspedale INT NOT NULL,
+    PRIMARY KEY (CFVicePrimario),
+    FOREIGN KEY (CFVicePrimario) REFERENCES Personale(CF) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (NomeReparto, CodiceOspedale) REFERENCES Reparto(Nome, CodiceOspedale) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Sostituzione (
+    CFPrimario CHAR(16) NOT NULL,
+    CFVicePrimario CHAR(16) NOT NULL, 
+    DataInizio DATE NOT NULL,
+    DataFine DATE NOT NULL,
+    PRIMARY KEY (CFPrimario, CFVicePrimario, DataInizio),
+    FOREIGN KEY (CFPrimario) REFERENCES Primario(CFPrimario) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (CFVicePrimario) REFERENCES VicePrimario(CFVicePrimario) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Ricoverato (
+    CFPaziente CHAR(16) NOT NULL,
+    DataRicovero DATE NOT NULL,
+    DataDimissione DATE CHECK (DataDimissione > DataRicovero),
+    PRIMARY KEY (CFPaziente, DataRicovero),
+    FOREIGN KEY (CFPaziente) REFERENCES Paziente(CF) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Patologia (
+    Nome VARCHAR(50) PRIMARY KEY NOT NULL
+);
+
+CREATE TABLE Ha_Specializzazione (
+    NomeSpecializzazione VARCHAR(50) NOT NULL,
+    CFPrimario CHAR(16) NOT NULL,
+    PRIMARY KEY (NomeSpecializzazione, CFPrimario),
+    FOREIGN KEY (CFPrimario) REFERENCES Primario(CFPrimario) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (NomeSpecializzazione) REFERENCES Specializzazione(Nome) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Ha_Patologie (
+    NomePatologia VARCHAR(50) NOT NULL,
+    DataRicovero DATE NOT NULL,
+    CFRicoverato CHAR(16) NOT NULL,
+    PRIMARY KEY (NomePatologia, CFRicoverato, DataRicovero),
+    FOREIGN KEY (CFRicoverato, DataRicovero) REFERENCES Ricoverato(CFPaziente, DataRicovero) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (NomePatologia) REFERENCES Patologia(Nome) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Ha_Avvertenze (
+    IDEsame INT NOT NULL,
+    DescrizioneAvvertenze TEXT NOT NULL,
+    PRIMARY KEY (IDEsame, DescrizioneAvvertenze),
+    FOREIGN KEY (IDEsame) REFERENCES Esame(IDEsame) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (DescrizioneAvvertenze) REFERENCES Avvertenze(Descrizione) ON DELETE CASCADE ON UPDATE CASCADE
+);

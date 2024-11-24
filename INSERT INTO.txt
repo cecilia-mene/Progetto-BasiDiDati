@@ -1,0 +1,156 @@
+INSERT INTO Ospedale (Codice, Nome, Indirizzo) VALUES 
+(1, 'Ospedale Maggiore', 'Via Roma 1'),
+(2, 'Ospedale San Raffaele', 'Piazza Dante 2'),
+(3, 'Ospedale Santa Maria', 'Corso Umberto 3'),
+(4, 'Ospedale Nuovo', 'Via Milano 4');
+
+INSERT INTO ProntoSoccorso (Indirizzo, CodiceOspedale) VALUES 
+('Via Roma 1', 1),
+('Piazza Dante 2', 2),
+('Corso Umberto 3', 3),
+('Via Milano 4', 4);
+
+
+INSERT INTO Reparto (Nome, CodiceOspedale, Telefono) VALUES 
+('Cardiologia', 1, '1234567890'),
+('Ortopedia', 1, '2345678901'),
+('Medicina Generale', 2, '3456789012'),
+('Pediatria', 3, '4567890123'),
+('Cardiologia', 2, '1234567898'),
+('Ortopedia', 2, '1234547898'),
+('Medicina Generale', 3, '1234557898'),
+('Cardiologia', 4, '12345447898'),
+('Medicina Generale', 1, '33335447898'),
+('Ortopedia', 4, '33435457898'),
+('Pediatria', 1, '33439457898');
+
+INSERT INTO OrarioVisiteReparto (NomeReparto, CodiceOspedale, Giorno, OrarioApertura, OrarioChiusura) VALUES 
+('Cardiologia', 1, 'Lunedì', '09:00:00', '12:00:00'),
+('Ortopedia', 1, 'Martedì', '10:00:00', '13:00:00'),
+('Medicina Generale', 2, 'Mercoledì', '11:00:00', '14:00:00'),
+('Pediatria', 3, 'Giovedì', '09:30:00', '12:30:00')
+('Cardiologia', 2, 'Venerdì', '08:30:00', '11:30:00'),
+('Ortopedia', 2, 'Sabato', '09:00:00', '12:00:00'),
+('Medicina Generale', 3, 'Domenica', '10:00:00', '13:00:00'),
+('Cardiologia', 4, 'Lunedì', '11:00:00', '14:00:00'),
+('Medicina Generale', 1, 'Martedì', '08:00:00', '11:00:00'),
+('Ortopedia', 4, 'Mercoledì', '09:30:00', '12:30:00'),
+('Pediatria', 1, 'Giovedì', '10:30:00', '13:30:00');
+
+INSERT INTO Personale (CF, Nome, Cognome, CodiceOspedale, NomeReparto, AnzianitaServizio, TipoPersonale) VALUES 
+('RSSMRA85M01H501Z', 'Mario', 'Rossi', 1, 'Cardiologia', 10, 'personale medico'),
+('VRDLGI90L20H501Y', 'Luigi', 'Verdi', 1, 'Ortopedia', 5, 'infermiere'),
+('BNCLRA75H01H501K', 'Laura', 'Bianchi', 2, 'Medicina Generale', 15, 'personale amministrativo'),
+('FBRGNN80J20H501L', 'Gianna', 'Fabri', 3, 'Pediatria', 8, 'personale medico');
+('PLRNTN75A10H502M', 'Antonio', 'Pellerano', 2, 'Cardiologia', 12, 'personale medico'),
+('FRSGLD85B15H502N', 'Gilda', 'Ferrari', 2, 'Ortopedia', 6, 'infermiere'),
+('DSMMLA82C02H503O', 'Lara', 'Desantis', 3, 'Medicina Generale', 20, 'personale amministrativo'),
+('GRNDSF75D03H503P', 'Fabio', 'Grandi', 3, 'Pediatria', 5, 'personale medico'),
+('SMLNCL80E04H504Q', 'Claudia', 'Salmi', 4, 'Cardiologia', 8, 'personale medico'),
+('VRLMRA88F05H504R', 'Marco', 'Verdi', 4, 'Ortopedia', 4, 'infermiere'),
+('PLRNTN79G06H501S', 'Nadia', 'Palladino', 1, 'Medicina Generale', 18, 'personale amministrativo'),
+('CRNTNI84H07H501T', 'Nico', 'Carotti', 1, 'Pediatria', 10, 'personale medico');
+
+
+INSERT INTO Paziente (CF, Nome, Cognome, DataNascita) VALUES 
+('BNCLRA85M01H501Z', 'Laura', 'Bianchi', '1985-01-01'),
+('FBRGNN90L20H501Y', 'Gianna', 'Fabri', '1990-07-20'),
+('RSSMRA80M10H501X', 'Mario', 'Rossi', '1980-10-10'),
+('VRDLGI70L20H501W', 'Luigi', 'Verdi', '1970-12-20');
+
+INSERT INTO Esame (IDEsame, Nome, Descrizione, Specialistico, CostoPrivato, CostoSanitario) VALUES 
+(1, 'Risonanza Magnetica', 'Esame di risonanza magnetica', 'Sì', 200.00, 150.00),
+(2, 'Intolleranze Alimentari', 'Prove Allergiche', 'Sì', 80.00, 50.00),
+(3, 'Ecografia', 'Esame ecografico', 'No', 100.00, 80.00),
+(4, 'Mammografia', 'Esame della mammella', 'No', 150.00, 100.00);
+
+INSERT INTO Prenotazione (CFPaziente, DataPrenotazione, IDEsame, Urgenza, DataOraEsame) VALUES 
+('BNCLRA85M01H501Z', '2024-06-01', 1, 'rosso', '2024-06-10 10:00:00'),
+('FBRGNN90L20H501Y', '2024-06-02', 2, 'giallo', '2024-06-15 12:00:00'),
+('RSSMRA80M10H501X', '2024-06-03', 3, 'verde', '2024-06-20 09:00:00'),
+('VRDLGI70L20H501W', '2024-06-04', 4, 'rosso', '2024-06-25 11:00:00');
+
+INSERT INTO Avvertenze (Descrizione) VALUES 
+('Digiuno da almeno 8 ore prima'),
+('Bere molta acqua'),
+('Non assumere farmaci'),
+('Riposo totale');
+
+INSERT INTO TurniPS (IndirizzoPS, CodiceOspedale, CFPersonale, OraInizio, OraFine) VALUES 
+('Via Roma 1', 1, 'RSSMRA85M01H501Z', '08:00:00', '14:00:00'),
+('Piazza Dante 2', 2, 'VRDLGI90L20H501Y', '14:00:00', '20:00:00'),
+('Corso Umberto 3', 3, 'FBRGNN80J20H501L', '10:00:00', '16:00:00'),
+('Via Milano 4', 4, 'VRLMRA88F05H504R', '08:30:00', '19:00:00');
+
+
+INSERT INTO SalaOperatoria (NumeroSala, CodiceOspedale, NomeReparto) VALUES 
+(101, 1, 'Cardiologia'),
+(102, 1, 'Ortopedia'),
+(201, 2, 'Medicina Generale'),
+(301, 3, 'Pediatria');
+
+INSERT INTO Stanza (Numero, NomeReparto, CodiceOspedale) VALUES 
+(11, 'Cardiologia', 1),
+(21, 'Ortopedia', 1),
+(32, 'Medicina Generale', 2),
+(43, 'Pediatria', 3);
+
+INSERT INTO Letto (CodiceLetto, NumeroStanza, NomeReparto, CodiceOspedale, Stato) VALUES 
+(1, 11, 'Cardiologia', 1, TRUE),
+(2, 21, 'Ortopedia', 1, FALSE),
+(3, 32, 'Medicina Generale', 2, TRUE),
+(4, 43, 'Pediatria', 3, FALSE);
+
+
+INSERT INTO Ambulatorio (ID) VALUES 
+(33),
+(22),
+(66),
+(55);
+
+INSERT INTO Primario (CFPrimario, NomeReparto, CodiceOspedale) VALUES 
+('BNCLRA75H01H501K', 'Medicina Generale', 2),
+('FBRGNN80J20H501L', 'Pediatria', 3);
+
+INSERT INTO Specializzazione (Nome) VALUES 
+('Cardiologia'),
+('Ortopedia'),
+('Medicina Generale'),
+('Pediatria');
+
+INSERT INTO VicePrimario (CFVicePrimario, DataAssunzione, NomeReparto, CodiceOspedale) VALUES 
+('VRDLGI90L20H501Y', '2020-01-01', 'Cardiologia', 1),
+('RSSMRA85M01H501Z', '2018-12-10', 'Pediatria', 3);
+
+INSERT INTO Sostituzione (CFPrimario, CFVicePrimario, DataInizio, DataFine) VALUES 
+('BNCLRA75H01H501K', 'VRDLGI90L20H501Y', '2024-01-01', '2024-01-15'),
+('FBRGNN80J20H501L', 'RSSMRA85M01H501Z', '2024-02-05', '2024-02-20');
+
+INSERT INTO Ricoverato (CFPaziente, DataRicovero, DataDimissione) VALUES 
+('BNCLRA85M01H501Z', '2024-05-01', '2024-05-15'),
+('FBRGNN90L20H501Y', '2024-05-10', NULL),
+('RSSMRA80M10H501X', '2024-05-05', '2024-05-20'),
+('VRDLGI70L20H501W', '2024-05-15', '2024-05-25');
+
+INSERT INTO Patologia (Nome) VALUES 
+('Diabete'),
+('Ipertensione'),
+('Asma'),
+('Gastrite');
+
+INSERT INTO Ha_Specializzazione (NomeSpecializzazione, CFPrimario) VALUES 
+('Medicina Generale', 'BNCLRA75H01H501K'),
+('Pediatria', 'FBRGNN80J20H501L');
+
+INSERT INTO Ha_Patologie (NomePatologia, DataRicovero, CFRicoverato) VALUES 
+('Diabete', '2024-05-01', 'BNCLRA85M01H501Z'),
+('Ipertensione', '2024-05-10', 'FBRGNN90L20H501Y'),
+('Asma', '2024-05-05', 'RSSMRA80M10H501X'),
+('Gastrite', '2024-05-15', 'VRDLGI70L20H501W');
+
+INSERT INTO Ha_Avvertenze (IDEsame, DescrizioneAvvertenze) VALUES 
+(1, 'Digiuno da almeno 8 ore prima'),
+(2, 'Bere molta acqua'),
+(3, 'Non assumere farmaci'),
+(4, 'Riposo totale');
+
